@@ -20,7 +20,7 @@ export function setupSocketIO(io){
                 }
                 const meeting = meetings[0];
 
-                if(meeting === "ended"){
+                if(meeting.status === "ended"){
                     socket.emit("meeting-ended", {message: "Meeting not found."})
                     return;
                 }
@@ -59,7 +59,7 @@ export function setupSocketIO(io){
                 socket.join(roomId)
 
                 //Get existing participants in the room
-                const existingUsers = Array.from(roomParticipants.value());
+                const existingUsers = Array.from(roomParticipants.values());
 
                 //Add new participants to socket state
                 roomParticipants.set(socket.id, currentUser);
@@ -67,7 +67,7 @@ export function setupSocketIO(io){
                 //Save participants into DB if not already present
                 const userId = user?.id || null;
                 const existingParticipants = await sql`
-                    SELECT id FRFOM meeting_participants
+                    SELECT id FROM meeting_participants
                     WHERE meeting_id = ${meeting.id}
                     AND ((${userId}::text IS NOT NULL AND user_id = ${userId}) OR name = ${currentUser.userName})
                 `;
@@ -106,7 +106,7 @@ export function setupSocketIO(io){
         //WebRTC Signaling: Answer
         //accept the offer request and process the connection
         socket.on('answer', ({targetSocketId, responderSocketId, sdp})=>{
-            io.to(targetSocketId).emit("offer", {
+            io.to(targetSocketId).emit("answer", {
                 responderSocketId,
                 sdp,
             })
@@ -176,7 +176,7 @@ export function setupSocketIO(io){
                     WHERE meeting_id = ${roomId}
                 `;
 
-                io.on(roomId).emit("meeting-ended", { message: "The meeting has been ended by the host."});
+                io.in(roomId).emit("meeting-ended", { message: "The meeting has been ended by the host."});
                 rooms.delete(roomId);
             } catch (error) {
                 console.error("Error ending meeting:",error);
