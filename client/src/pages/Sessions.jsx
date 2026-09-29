@@ -7,6 +7,7 @@ import SessionDetailModal from '../components/sessions/SessionDetailModal'
 import { useAuth } from '@clerk/react'
 import api from '../config/api.js'
 import Loader from '../components/Loader'
+import toast from 'react-hot-toast'
 
 const Sessions = () => {
 
@@ -24,7 +25,7 @@ const Sessions = () => {
       try {
         const token = await getToken();
         if(!token) return;
-        const res = await api("/api/meetings/session", {headers: {Authorization: `Bearer ${token}`,}})
+        const res = await api("/api/meetings/sessions", {headers: {Authorization: `Bearer ${token}`,}})
         setSessions(res.data.meetings || [])
       } catch (_error) {
         toast.error("Failed to load meeting sessions");

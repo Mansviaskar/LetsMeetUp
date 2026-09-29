@@ -11,6 +11,7 @@ import toast from 'react-hot-toast'
 import { useAuth, useUser } from '@clerk/react'
 import { useMemo } from 'react'
 import Loader from '../components/Loader'
+import api from '../config/api.js'
 
 const MeetingRoom = () => {
   const {meetingId} = useParams()
