@@ -112,9 +112,10 @@ export const useWebRTC = (roomId, user, onMeetingEnded, enabled = true) => {
 
         const startSession = async () => {
             const stream = await initLocalStream();
-
-            if (!isMounted) return;
-
+            if (!isMounted) {
+                stream?.getTracks().forEach((t) => t.stop());
+                return;
+            }
             if (!socket.connected) {
                 socket.connect();
             }
@@ -153,8 +154,9 @@ export const useWebRTC = (roomId, user, onMeetingEnded, enabled = true) => {
             });
 
             // 3. Receive offer from caller
-            socket.on("offer", async ({ callerSocketId, sdp, callerUser }) => {
-                const peer = createPeerConnection(callerSocketId, callerUser);
+            socket.on("offer", async ({ callerSocketId, sdp, calleruser }) => {
+                const peer = createPeerConnection(callerSocketId, calleruser);
+
                 try {
                     await peer.setRemoteDescription(new RTCSessionDescription(sdp));
                     const answer = await peer.createAnswer();
