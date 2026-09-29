@@ -16,7 +16,7 @@ const Navbar = () => {
         <Link to='/dashboard' className='flex items-center gap-1.5'>
           <img src="logo.svg" alt="MeetUp Logo" className="size-6.5"/>
           <span className="text-2xl font-medium tracking-tight text-slate-900 flex items-center">
-            MeetUp<span className="text-primary">.</span>
+            LetsMeetUp<span className="text-primary">.</span>
           </span>
         </Link>
 
